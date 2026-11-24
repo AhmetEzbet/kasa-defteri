@@ -157,6 +157,10 @@ jobs:
       - name: Apple anahtarını dene
         if: env.ATLA != '1'
         run: node asc-kontrol.mjs
+      - name: TestFlight test grubu
+        if: env.ATLA != '1'
+        continue-on-error: true
+        run: node testflight-grup.mjs
       - name: Derle ve TestFlight'a yükle
         if: env.ATLA != '1'
         run: |
