@@ -178,3 +178,4 @@ jobs:
           xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" $AUTH
           rm -f "$KEY"
+# iOS anahtarı eklendi: 2026-11-24
