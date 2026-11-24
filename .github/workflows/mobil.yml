@@ -154,11 +154,14 @@ jobs:
           /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 'Dekont eklemek için fotoğraflarınızdan seçim yapılır.'" $P
           /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" $P
           npx cap sync ios
+      - name: Apple anahtarını dene
+        if: env.ATLA != '1'
+        run: node asc-kontrol.mjs
       - name: Derle ve TestFlight'a yükle
         if: env.ATLA != '1'
         run: |
           KEY="$RUNNER_TEMP/AuthKey_$ASC_KEY_ID.p8"
-          printf '%s' "$ASC_KEY_P8" > "$KEY"
+          printf '%s\n' "$ASC_KEY_P8" | tr -d '\r' > "$KEY"
           AUTH="-allowProvisioningUpdates -authenticationKeyPath $KEY -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
             -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" archive \
