@@ -39,6 +39,14 @@ h1{font-size:28px;margin:0 0 6px;letter-spacing:-.02em}
 .alt{color:var(--muted);margin:0 0 26px;line-height:1.45}
 .alan{width:100%;padding:15px 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);font-size:18px;letter-spacing:.08em;text-transform:uppercase;outline:none}
 .alan:focus{border-color:var(--ink)}
+.alan.duz{letter-spacing:0;text-transform:none;font-size:17px}
+.giris-kutu .lbl{margin-top:12px}
+.gs{display:grid;grid-template-columns:1fr 1fr;background:var(--line);border-radius:12px;padding:4px;margin-bottom:6px}
+.gs button{padding:11px;border-radius:9px;font-weight:600;font-size:15px;color:var(--muted)}
+.gs button.sec{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.kod-link{display:block;margin:18px auto 0;font-size:14px;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:8px}
+.uyari{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:12px 14px;margin-bottom:14px;font-size:14px;line-height:1.45;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.uyari button{font-weight:650;white-space:nowrap;padding:8px 0}
 .btn{width:100%;padding:15px;border-radius:12px;background:var(--ink);color:var(--paper);font-weight:600;font-size:17px;margin-top:12px}
 .btn:disabled{opacity:.55}
 .hata{color:var(--out);font-size:14px;min-height:20px;margin-top:10px;line-height:1.4}
@@ -221,15 +229,29 @@ h1{font-size:28px;margin:0 0 6px;letter-spacing:-.02em}
 <body>
 
 <section id="giris" hidden>
-  <form class="giris-kutu" id="girisForm" autocomplete="off" novalidate>
+  <div class="giris-kutu">
     <div class="logo" aria-hidden="true">K</div>
     <h1>Kasa Defteri</h1>
-    <p class="alt">Gelirini ve giderini tek yerde tut. Sana verilen kasa kodunu bir kere yaz, bu cihaz hatırlar.</p>
-    <label class="lbl" for="kodGir">Kasa kodu</label>
-    <input class="alan num" id="kodGir" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" autocapitalize="characters" autocorrect="off" spellcheck="false" inputmode="text">
-    <button class="btn" id="girisBtn" type="submit">Kasayı aç</button>
-    <div class="hata" id="girisHata" role="alert"></div>
-  </form>
+    <p class="alt">Gelirini ve giderini tek yerde tut. İşletmelerini ayrı ayrı takip et.</p>
+    <form id="girisForm" autocomplete="on" novalidate>
+      <div class="gs" role="tablist"><button type="button" data-gs="giris" class="sec" role="tab">Giriş yap</button><button type="button" data-gs="kayit" role="tab">Kayıt ol</button></div>
+      <div id="adAlan" hidden><label class="lbl" for="gAd">Adın</label><input class="alan duz" id="gAd" maxlength="40" autocomplete="name" autocapitalize="words" placeholder="Örn. Kerem"></div>
+      <label class="lbl" for="gKadi">Kullanıcı adı</label>
+      <input class="alan duz" id="gKadi" maxlength="30" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="örn. kerem.yigit">
+      <label class="lbl" for="gSifre">Şifre</label>
+      <input class="alan duz" id="gSifre" type="password" maxlength="72" autocomplete="current-password" placeholder="En az 8 karakter">
+      <div id="sifre2Alan" hidden><label class="lbl" for="gSifre2">Şifre (tekrar)</label><input class="alan duz" id="gSifre2" type="password" maxlength="72" autocomplete="new-password"></div>
+      <button class="btn" id="girisBtn" type="submit">Giriş yap</button>
+      <div class="hata" id="girisHata" role="alert"></div>
+    </form>
+    <button type="button" class="kod-link" id="kodLink">Kasa kodum var</button>
+    <form id="kodForm" autocomplete="off" novalidate hidden>
+      <label class="lbl" for="kodGir">Kasa kodu</label>
+      <input class="alan num" id="kodGir" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" autocapitalize="characters" autocorrect="off" spellcheck="false" inputmode="text">
+      <button class="btn" id="kodBtn" type="submit">Kasayı aç</button>
+      <div class="hata" id="kodHata" role="alert"></div>
+    </form>
+  </div>
 </section>
 
 <main id="uyg" hidden>
@@ -239,13 +261,15 @@ h1{font-size:28px;margin:0 0 6px;letter-spacing:-.02em}
       <button class="isl-btn" id="islBtn" hidden aria-haspopup="dialog"><span id="islAd"></span><i aria-hidden="true">▾</i></button>
       <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false">Ayarlar</button>
       <div class="menu" id="menu" hidden>
-        <div class="kod-goster">Kasa kodun<b class="num" id="kodYaz"></b></div>
+        <div class="kod-goster"><span id="kodBaslik">Kasa kodun</span><b class="num" id="kodYaz"></b></div>
+        <button id="hesapBtn">Giriş bilgisi oluştur</button>
         <button id="islMenuBtn">İşletmeler</button>
         <button id="yenileBtn">Yenile</button>
         <button id="cikisBtn" class="tehlike">Bu cihazdan çıkış yap</button>
       </div>
     </div>
 
+    <div class="uyari" id="hesapUyari" hidden><span>Kasa kodu yerine kullanıcı adı ve şifreyle girmek ister misin?</span><button type="button" id="hesapUyariBtn">Oluştur</button></div>
     <section id="ayGorunum">
       <div class="ust" style="justify-content:center;gap:8px">
         <div class="ay-sec">
@@ -354,6 +378,15 @@ h1{font-size:28px;margin:0 0 6px;letter-spacing:-.02em}
   </form>
   <div class="hata" id="islHata" role="alert"></div>
 </div>
+<form class="panel" id="hesapPanel" autocomplete="on" novalidate role="dialog" aria-modal="true" aria-labelledby="hesapBaslik">
+  <div class="panel-bas"><h2 id="hesapBaslik">Giriş bilgisi oluştur</h2><button type="button" class="vazgec" id="hesapKapat">Kapat</button></div>
+  <div id="hpKadiAlan"><label class="lbl" for="hpKadi">Kullanıcı adı</label><input class="kucuk" id="hpKadi" maxlength="30" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="örn. kerem.yigit"></div>
+  <div id="hpEskiAlan" hidden><label class="lbl" for="hpEski" style="margin-top:12px">Şu anki şifre</label><input class="kucuk" id="hpEski" type="password" autocomplete="current-password"></div>
+  <label class="lbl" for="hpSifre" style="margin-top:12px">Yeni şifre</label><input class="kucuk" id="hpSifre" type="password" maxlength="72" autocomplete="new-password" placeholder="En az 8 karakter">
+  <label class="lbl" for="hpSifre2" style="margin-top:12px">Yeni şifre (tekrar)</label><input class="kucuk" id="hpSifre2" type="password" maxlength="72" autocomplete="new-password">
+  <div class="hata" id="hpHata" role="alert"></div>
+  <button type="submit" class="btn" id="hpKaydet">Kaydet</button>
+</form>
 <div class="panel" id="araPanel" role="dialog" aria-modal="true" aria-labelledby="araBaslik">
   <div class="panel-bas"><h2 id="araBaslik">Ara</h2><button type="button" class="vazgec" id="araKapat">Kapat</button></div>
   <input class="kucuk" id="araGir" maxlength="60" placeholder="Kişi adı ya da açıklama yaz" enterkeyhint="search" autocorrect="off" spellcheck="false" aria-label="Ara">
@@ -368,7 +401,7 @@ h1{font-size:28px;margin:0 0 6px;letter-spacing:-.02em}
 <div class="bildirim" id="bildirim" role="status" aria-live="polite"><span id="bildirimYazi"></span><button type="button" id="geriAlBtn" hidden>Geri al</button></div>
 
 <script>
-const SURUM='2026-11-24d';
+const SURUM='2026-11-24e';
 const API='https://lnrrgirozxjzchluftgy.supabase.co/rest/v1/rpc/';
 const KEY='sb_publishable_quZTADUpRt-vhPR0kRFf7g__OULYcrf';
 const KATEGORI={
@@ -471,20 +504,20 @@ $('kodGir').addEventListener('input',function(e){
   const h=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,16);
   e.target.value=(h.match(/.{1,4}/g)||[]).join('-');
 });
-$('girisForm').addEventListener('submit',async function(e){
-  e.preventDefault(); const k=$('kodGir').value.trim(); if(k.length<19){$('girisHata').textContent='Kodu eksiksiz yaz. 16 harf ve rakamdan oluşuyor.';return}
-  $('girisBtn').disabled=true;$('girisHata').textContent='';
+$('kodForm').addEventListener('submit',async function(e){
+  e.preventDefault(); const k=$('kodGir').value.trim(); if(k.length<19){$('kodHata').textContent='Kodu eksiksiz yaz. 16 harf ve rakamdan oluşuyor.';return}
+  $('kodBtn').disabled=true;$('kodHata').textContent='';
   try{const ad=await rpc('kasa_giris',{p_kod:k});depo('kasa_kod',k);depo('kasa_ad',ad);ac(k,ad)}
-  catch(err){$('girisHata').textContent=err.kodHata?'Bu kod geçerli değil. Tekrar kontrol et.':'Bağlantı kurulamadı. İnterneti kontrol edip tekrar dene.'}
-  finally{$('girisBtn').disabled=false}
+  catch(err){$('kodHata').textContent=err.kodHata?'Bu kod geçerli değil. Tekrar kontrol et.':'Bağlantı kurulamadı. İnterneti kontrol edip tekrar dene.'}
+  finally{$('kodBtn').disabled=false}
 });
-function ac(k,ad){kod=k;$('giris').hidden=true;$('uyg').hidden=false;$('adYaz').textContent=ad?('Merhaba '+ad):'';$('kodYaz').textContent=k;ay=buAy();ayGuncel=true;ustCiz();ayYukle();isletmeYukle();kisiYukle();taslakGeriYukle()}
+function ac(k,ad){kod=k;$('giris').hidden=true;$('uyg').hidden=false;$('adYaz').textContent=ad?('Merhaba '+ad):'';$('kodYaz').textContent=depo('kasa_kadi')||(k.indexOf('ot_')===0?'':k);ay=buAy();ayGuncel=true;ustCiz();ayYukle();isletmeYukle();kisiYukle();taslakGeriYukle();hesapBilgiYukle()}
 
 /* menü */
 $('menuBtn').onclick=function(e){e.stopPropagation();const m=$('menu');m.hidden=!m.hidden;this.setAttribute('aria-expanded',String(!m.hidden))};
 document.addEventListener('click',function(e){if(!$('menu').hidden&&!$('menu').contains(e.target)){$('menu').hidden=true;$('menuBtn').setAttribute('aria-expanded','false')}});
 $('yenileBtn').onclick=function(){$('menu').hidden=true;location.reload()};
-$('cikisBtn').onclick=function(){$('menu').hidden=true;if(!confirm('Bu cihazdan çıkış yapılsın mı?\n\nKayıtların silinmez. Tekrar girmek için kasa kodun gerekir:\n'+kod))return;silmeyiBitir();depo('kasa_kod',null);depo('kasa_ad',null);depo('kasa_isl',null);depo('kasa_isl_liste',null);depo('kasa_kisi',null);kisiler=[];Object.keys(dekontBellek).forEach(function(k){URL.revokeObjectURL(dekontBellek[k].url);delete dekontBellek[k]});isletmeler=[];seciliIsl=null;kod=null;$('uyg').hidden=true;$('giris').hidden=false;$('kodGir').value=''};
+$('cikisBtn').onclick=function(){$('menu').hidden=true;const kadi=depo('kasa_kadi');if(!confirm('Bu cihazdan çıkış yapılsın mı?\n\nKayıtların silinmez. '+(kadi?'Tekrar girmek için kullanıcı adın ('+kadi+') ve şifren gerekir.':'Tekrar girmek için kasa kodun gerekir:\n'+kod)))return;silmeyiBitir();if(kod&&kod.indexOf('ot_')===0)rpc('kasa_cikis',{p_kod:kod}).catch(function(){});depo('kasa_kadi',null);depo('kasa_kod',null);depo('kasa_ad',null);depo('kasa_isl',null);depo('kasa_isl_liste',null);depo('kasa_kisi',null);kisiler=[];Object.keys(dekontBellek).forEach(function(k){URL.revokeObjectURL(dekontBellek[k].url);delete dekontBellek[k]});isletmeler=[];seciliIsl=null;kod=null;$('uyg').hidden=true;$('giris').hidden=false;$('kodGir').value='';document.querySelector('[data-gs=giris]').click()};
 
 function hataYakala(err){if(err.kodHata){depo('kasa_kod',null);location.reload()}else bildir(err.ag?'Bağlantı yok ya da çok yavaş.':'Bir sorun oldu, tekrar dene.')}
 
@@ -709,12 +742,12 @@ function panelAc(tur,k){
   $('panel').scrollTop=0;
   if(!k){try{$('fTutar').focus({preventScroll:true})}catch(e){$('fTutar').focus()}}
 }
-function panelKapat(zorla){if(mesgul&&!zorla)return;taslakSil();$('perde').classList.remove('acik');$('panel').classList.remove('acik');$('islPanel').classList.remove('acik');$('araPanel').classList.remove('acik');document.body.classList.remove('kilit');if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}
+function panelKapat(zorla){if(mesgul&&!zorla)return;taslakSil();$('perde').classList.remove('acik');$('panel').classList.remove('acik');$('islPanel').classList.remove('acik');$('araPanel').classList.remove('acik');$('hesapPanel').classList.remove('acik');document.body.classList.remove('kilit');if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}
 function vazgec(){if(mesgul)return;if(!duzenlenen&&($('fTutar').value||$('fAcik').value||$('fKisi').value||yeniDekont.length)&&!confirm('Yazdıkların silinsin mi?'))return;panelKapat()}
-$('perde').onclick=function(){($('islPanel').classList.contains('acik')||$('araPanel').classList.contains('acik'))?panelKapat():vazgec()};$('vazgecBtn').onclick=vazgec;
-document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;if(!$('bak').hidden){bakKapat();return}if($('islPanel').classList.contains('acik')||$('araPanel').classList.contains('acik'))panelKapat();else if($('panel').classList.contains('acik'))vazgec()});
+$('perde').onclick=function(){($('islPanel').classList.contains('acik')||$('araPanel').classList.contains('acik')||$('hesapPanel').classList.contains('acik'))?panelKapat():vazgec()};$('vazgecBtn').onclick=vazgec;
+document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;if(!$('bak').hidden){bakKapat();return}if($('islPanel').classList.contains('acik')||$('araPanel').classList.contains('acik')||$('hesapPanel').classList.contains('acik'))panelKapat();else if($('panel').classList.contains('acik'))vazgec()});
 if(window.visualViewport){const vv=window.visualViewport;
-  const ayar=function(){[$('panel'),$('islPanel'),$('araPanel')].forEach(function(P){if(window.innerWidth>=700){P.style.bottom='';P.style.maxHeight='';return}
+  const ayar=function(){[$('panel'),$('islPanel'),$('araPanel'),$('hesapPanel')].forEach(function(P){if(window.innerWidth>=700){P.style.bottom='';P.style.maxHeight='';return}
     P.style.bottom=Math.max(0,window.innerHeight-vv.height-vv.offsetTop)+'px';P.style.maxHeight=(vv.height-12)+'px'})};
   vv.addEventListener('resize',ayar);vv.addEventListener('scroll',ayar)}
 $('panel').addEventListener('submit',async function(e){
@@ -764,6 +797,56 @@ $('fSil').onclick=function(){
   bekleyenSil={kayit:k,kod:kod,z:setTimeout(silmeyiBitir,5500)};
   bildir('Kayıt silindi',function(){if(!bekleyenSil)return;clearTimeout(bekleyenSil.z);bekleyenSil=null;ayYukle()});
 };
+
+/* hesap: kullanıcı adı + şifre */
+const HATA={giris_hatali:'Kullanıcı adı ya da şifre yanlış.',hesap_kilitli:'Çok fazla yanlış deneme. 5 dakika sonra tekrar dene.',kadi_alinmis:'Bu kullanıcı adı alınmış, başka bir tane dene.',kadi_gecersiz:'Kullanıcı adı 3-30 karakter olmalı. Harf, rakam, nokta ve alt çizgi kullanılabilir.',sifre_kisa:'Şifre en az 8 karakter olmalı.'};
+function hataMetni(err){const m=(err&&err.message)||'';for(const k in HATA)if(m.indexOf(k)>-1)return HATA[k];return err&&err.ag?'Bağlantı kurulamadı. İnterneti kontrol edip tekrar dene.':'Bir sorun oldu, tekrar dene.'}
+function kadiTemizle(v){return String(v||'').toLocaleLowerCase('tr').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u').replace(/[^a-z0-9._]/g,'')}
+['gKadi','hpKadi'].forEach(function(id){$(id).addEventListener('input',function(){const v=kadiTemizle(this.value);if(v!==this.value)this.value=v})});
+let gsMod='giris';
+document.querySelectorAll('[data-gs]').forEach(function(b){b.onclick=function(){gsMod=b.dataset.gs;
+  document.querySelectorAll('[data-gs]').forEach(function(x){x.classList.toggle('sec',x===b);x.setAttribute('aria-selected',String(x===b))});
+  const k=gsMod==='kayit';$('adAlan').hidden=!k;$('sifre2Alan').hidden=!k;$('girisBtn').textContent=k?'Kayıt ol':'Giriş yap';
+  $('gSifre').autocomplete=k?'new-password':'current-password';$('girisHata').textContent=''}});
+$('kodLink').onclick=function(){$('kodForm').hidden=!$('kodForm').hidden;if(!$('kodForm').hidden)$('kodGir').focus()};
+$('girisForm').addEventListener('submit',async function(e){
+  e.preventDefault();const H=$('girisHata'),kadi=kadiTemizle($('gKadi').value),s=$('gSifre').value;
+  if(kadi.length<3){H.textContent=HATA.kadi_gecersiz;return}
+  if(s.length<8){H.textContent=HATA.sifre_kisa;return}
+  if(gsMod==='kayit'&&s!==$('gSifre2').value){H.textContent='Şifreler aynı değil.';return}
+  $('girisBtn').disabled=true;H.textContent='';
+  try{const r=((gsMod==='kayit')?await rpc('kasa_kayit_ol',{p_kullanici:kadi,p_sifre:s,p_ad:$('gAd').value}):await rpc('kasa_giris_yap',{p_kullanici:kadi,p_sifre:s}))[0];
+    depo('kasa_kod',r.token);depo('kasa_ad',r.ad);depo('kasa_kadi',kadi);$('gSifre').value='';$('gSifre2').value='';ac(r.token,r.ad)}
+  catch(err){H.textContent=hataMetni(err)}
+  finally{$('girisBtn').disabled=false}
+});
+async function hesapBilgiYukle(){
+  try{const r=((await rpc('kasa_hesap_bilgi',{p_kod:kod}))||[])[0];if(!r)return;
+    if(r.kullanici_adi){depo('kasa_kadi',r.kullanici_adi)}else depo('kasa_kadi',null);
+    hesapCiz()}catch(e){}
+}
+function hesapCiz(){const kadi=depo('kasa_kadi');
+  $('kodBaslik').textContent=kadi?'Kullanıcı adın':'Kasa kodun';$('kodYaz').textContent=kadi||kod;
+  $('hesapBtn').textContent=kadi?'Şifre değiştir':'Giriş bilgisi oluştur';
+  $('hesapUyari').hidden=!!kadi||!kod||kod.indexOf('ot_')===0}
+function hesapPanelAc(){$('menu').hidden=true;const kadi=depo('kasa_kadi');
+  $('hesapBaslik').textContent=kadi?'Şifre değiştir':'Giriş bilgisi oluştur';
+  $('hpKadiAlan').hidden=!!kadi;$('hpEskiAlan').hidden=!kadi;['hpKadi','hpEski','hpSifre','hpSifre2'].forEach(function(i){$(i).value=''});$('hpHata').textContent='';
+  $('perde').classList.add('acik');$('hesapPanel').classList.add('acik');document.body.classList.add('kilit')}
+$('hesapBtn').onclick=hesapPanelAc;$('hesapUyariBtn').onclick=hesapPanelAc;$('hesapKapat').onclick=function(){panelKapat()};
+$('hesapPanel').addEventListener('submit',async function(e){
+  e.preventDefault();const H=$('hpHata'),kadi=depo('kasa_kadi'),s=$('hpSifre').value;
+  if(s.length<8){H.textContent=HATA.sifre_kisa;return}
+  if(s!==$('hpSifre2').value){H.textContent='Şifreler aynı değil.';return}
+  $('hpKaydet').disabled=true;H.textContent='';
+  try{
+    if(kadi){await rpc('kasa_sifre_degistir',{p_kod:kod,p_eski:$('hpEski').value,p_yeni:s});panelKapat();bildir('Şifren değişti')}
+    else{const yk=kadiTemizle($('hpKadi').value);if(yk.length<3){H.textContent=HATA.kadi_gecersiz;return}
+      const t=await rpc('kasa_giris_bilgisi_belirle',{p_kod:kod,p_kullanici:yk,p_sifre:s});
+      kod=t;depo('kasa_kod',t);depo('kasa_kadi',yk);hesapCiz();panelKapat();bildir('Artık kullanıcı adın ve şifrenle girebilirsin')}
+  }catch(err){H.textContent=err.kodHata?'Oturum geçersiz, tekrar giriş yap.':hataMetni(err)}
+  finally{$('hpKaydet').disabled=false}
+});
 
 /* yerel uygulama (Android/iOS) için dosya paylaşımı */
 function yerelMi(){try{return !!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())}catch(e){return false}}

@@ -9,6 +9,7 @@ on:
       - 'icon-192.png'
       - 'apple-touch-icon.png'
       - 'mobil/**'
+      - 'masaustu/**'
       - '.github/workflows/mobil.yml'
   workflow_dispatch:
 
@@ -20,6 +21,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: masaustu
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: node hazirla.mjs
+      - run: npx electron-builder --win nsis --x64 --publish never
+      - name: Yayınla
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete windows -y --cleanup-tag || true
+          gh release create windows "dist/Kasa-Defteri-Kurulum.exe" --title "Kasa Defteri - Windows" --notes "Bilgisayara kurulum dosyası. İndirip çift tıklayın."
+
   android:
     name: Android APK
     runs-on: ubuntu-latest

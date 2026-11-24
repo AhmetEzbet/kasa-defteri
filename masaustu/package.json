@@ -1,0 +1,32 @@
+{
+  "name": "kasa-defteri-masaustu",
+  "productName": "Kasa Defteri",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kasa Defteri - gelir gider defteri (Windows)",
+  "author": "Ahmet Ezbet",
+  "main": "main.js",
+  "scripts": {
+    "hazirla": "node hazirla.mjs",
+    "paketle": "electron-builder --win --publish never"
+  },
+  "devDependencies": {
+    "electron": "^45.4.1",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.ezbet.kasadefteri",
+    "productName": "Kasa Defteri",
+    "files": ["main.js", "www/**/*"],
+    "directories": { "buildResources": "build", "output": "dist" },
+    "win": { "target": ["nsis"], "icon": "build/icon.png" },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Kasa Defteri",
+      "artifactName": "Kasa-Defteri-Kurulum.${ext}"
+    }
+  }
+}
