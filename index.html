@@ -660,6 +660,7 @@ $('excelBtn').onclick=async function(){
     });
     const blob=new Blob(['﻿'+satir.join('\r\n')],{type:'text/csv;charset=utf-8'});
     const ad='Kasa Defteri '+(seciliIsl!=null?islAdi(seciliIsl).replace(/[\\/:*?"<>|]/g,'')+' ':'')+yil+'.csv';
+    if(yerelMi()){try{await yerelPaylas(blob,ad)}catch(e){if(!/cancel/i.test(String(e&&e.message)))bildir('Dosya paylaşılamadı.')}return}
     let dosya=null;try{dosya=new File([blob],ad,{type:'text/csv'})}catch(e){}
     if(dosya&&navigator.canShare&&navigator.canShare({files:[dosya]})&&/iPhone|iPad|Android/i.test(navigator.userAgent)){
       try{await navigator.share({files:[dosya],title:ad})}catch(e){}
@@ -763,6 +764,15 @@ $('fSil').onclick=function(){
   bekleyenSil={kayit:k,kod:kod,z:setTimeout(silmeyiBitir,5500)};
   bildir('Kayıt silindi',function(){if(!bekleyenSil)return;clearTimeout(bekleyenSil.z);bekleyenSil=null;ayYukle()});
 };
+
+/* yerel uygulama (Android/iOS) için dosya paylaşımı */
+function yerelMi(){try{return !!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())}catch(e){return false}}
+function blobB64(blob){return new Promise(function(ok,red){const r=new FileReader();r.onload=function(){ok(String(r.result).split(',')[1])};r.onerror=red;r.readAsDataURL(blob)})}
+async function yerelPaylas(blob,ad){
+  const P=window.Capacitor.Plugins;
+  const yaz=await P.Filesystem.writeFile({path:ad,data:await blobB64(blob),directory:'CACHE'});
+  await P.Share.share({title:ad,url:yaz.uri,dialogTitle:ad});
+}
 
 /* ödeme şekli */
 function odemeCiz(){const F=$('fOdeme');F.innerHTML='';Object.keys(ODEME).forEach(function(k){const b=document.createElement('button');b.type='button';const s=fOdeme===k;
@@ -903,7 +913,8 @@ async function dekontAc(x){bakta=x;const G=$('bakGovde');G.className='bak-govde'
       const blob=b64Blob(r.veri,r.mime);d={mime:r.mime,blob:blob,url:URL.createObjectURL(blob)};dekontBellek[x.id]=d;dekontCiz()}
     if(bakta!==x)return;G.textContent='';
     if(d.mime==='application/pdf'){const b=document.createElement('button');b.type='button';b.className='btn';b.style.cssText='width:auto;padding:15px 26px;background:#fff;color:#1d1b17';b.textContent="PDF'i aç";
-      b.onclick=function(){let f=null;try{f=new File([d.blob],'dekont.pdf',{type:'application/pdf'})}catch(e){}
+      b.onclick=function(){if(yerelMi()){yerelPaylas(d.blob,'dekont.pdf').catch(function(){});return}
+        let f=null;try{f=new File([d.blob],'dekont.pdf',{type:'application/pdf'})}catch(e){}
         if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&/iPhone|iPad/i.test(navigator.userAgent))navigator.share({files:[f]}).catch(function(){});
         else window.open(d.url,'_blank')};G.appendChild(b)}
     else{const im=new Image();im.alt='Dekont';im.src=d.url;im.onclick=function(){G.classList.toggle('buyuk')};G.appendChild(im)}

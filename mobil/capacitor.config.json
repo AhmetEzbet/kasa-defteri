@@ -1,0 +1,20 @@
+{
+  "appId": "com.ezbet.kasadefteri",
+  "appName": "Kasa Defteri",
+  "webDir": "www",
+  "backgroundColor": "#f4f1ea",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#f4f1ea"
+  },
+  "android": {
+    "backgroundColor": "#f4f1ea"
+  },
+  "plugins": {
+    "StatusBar": {
+      "style": "LIGHT",
+      "backgroundColor": "#f4f1ea",
+      "overlaysWebView": false
+    }
+  }
+}
