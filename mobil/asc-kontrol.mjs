@@ -15,7 +15,7 @@ const dene = async k => {
   return r.ok;
 };
 let bulunan = null;
-for (const k of [kid, 'J5VBQ72FCS', 'XT42UQBMMF']) if (await dene(k)) { bulunan = k; break; }
+for (const k of [kid, 'J5VBQ72FCS']) if (await dene(k)) { bulunan = k; break; }
 if (!bulunan) { console.log('Anahtar hiçbir Key ID ile eşleşmedi.'); process.exit(1); }
 console.log(`Eşleşen Key ID: ${bulunan}`);
 if (process.env.GITHUB_ENV) (await import('node:fs')).appendFileSync(process.env.GITHUB_ENV, `ASC_KEY_ID=${bulunan}\n`);
